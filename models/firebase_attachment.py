@@ -34,6 +34,22 @@ class HelpdeskFirebaseAttachment(models.Model):
         index=True
     )
 
+    preview_html = fields.Html(string='Preview', compute='_compute_preview_html')
+
+    @api.depends('url', 'mimetype')
+    def _compute_preview_html(self):
+        for rec in self:
+            if not rec.url:
+                rec.preview_html = False
+                continue
+            
+            if rec.mimetype and rec.mimetype.startswith('image/'):
+                rec.preview_html = f'<img src="{rec.url}" style="max-height: 100px; max-width: 100px; object-fit: contain;" />'
+            elif rec.mimetype and rec.mimetype.startswith('video/'):
+                rec.preview_html = f'<video width="100" height="100" style="object-fit: contain;"><source src="{rec.url}" type="{rec.mimetype}">Browser anda tidak mendukung video.</video>'
+            else:
+                rec.preview_html = f'<a href="{rec.url}" target="_blank">Lihat File</a>'
+
     def action_open_link(self):
         self.ensure_one()
         if self.url:

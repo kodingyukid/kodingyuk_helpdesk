@@ -9,13 +9,8 @@ class HelpdeskTicket(models.Model):
 
     name = fields.Char(string='Ticket Number', required=True, copy=False, readonly=True, default=lambda self: _('New'))
     staff_id = fields.Many2one('res.partner', string='Nama Staff', required=True, tracking=True)
-    system_used = fields.Char(string='Sistem yang Digunakan', required=True, tracking=True)
-    issue_type = fields.Selection([
-        ('wrong_input', 'Salah input Absen siswa'),
-        ('system_error', 'Sistem Error'),
-        ('request_feature', 'Request Fitur'),
-        ('other', 'Lainnya')
-    ], string='Jenis Masalah', required=True, tracking=True)
+    system_id = fields.Many2one('helpdesk.system.type', string='Sistem yang Digunakan', required=True, tracking=True)
+    issue_type_id = fields.Many2one('helpdesk.issue.type', string='Jenis Masalah', required=True, tracking=True)
     
     chronology = fields.Text(string='Kronologi Singkat', required=True)
     data_to_fix = fields.Text(string='Data yang Perlu Diperbaiki', required=True)
@@ -48,7 +43,11 @@ class HelpdeskTicket(models.Model):
     def _send_state_change_email(self):
         template = self.env.ref('KodingYuk_helpdesk.email_template_helpdesk_ticket_state_change', raise_if_not_found=False)
         if template:
-            template.send_mail(self.id, force_send=True)
+            template.send_mail(self.id, force_send=True, 
+                               email_values={
+                                   'system': self.system_id.name,
+                                   'issue_type': self.issue_type_id.name
+                               })
 
     def action_upload_attachment(self):
         self.ensure_one()

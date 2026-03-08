@@ -9,8 +9,8 @@
                 <field name="name"/>
                 <field name="date"/>
                 <field name="staff_id"/>
-                <field name="system_used"/>
-                <field name="issue_type"/>
+                <field name="system_id"/>
+                <field name="issue_type_id"/>
                 <field name="state" widget="badge" decoration-info="state == 'new'" decoration-warning="state == 'in_progress'" decoration-success="state == 'solved'"/>
             </tree>
         </field>
@@ -35,8 +35,8 @@
                     <group>
                         <group>
                             <field name="staff_id"/>
-                            <field name="system_used"/>
-                            <field name="issue_type"/>
+                            <field name="system_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="issue_type_id" options="{'no_create': True, 'no_open': True}"/>
                         </group>
                         <group>
                             <field name="date"/>
@@ -52,10 +52,11 @@
                         <page string="Lampiran Bukti (Firebase)" name="attachments">
                             <field name="attachment_ids" mode="tree">
                                 <tree create="0" delete="1" edit="0">
+                                    <field name="preview_html" widget="html" string="Preview" style="width: 110px;"/>
                                     <field name="name"/>
                                     <field name="mimetype"/>
-                                    <field name="url" widget="url" readonly="1" text="Buka File"/>
-                                    <button name="action_open_link" string="Lihat" type="object" icon="fa-external-link"/>
+                                    <field name="url" widget="url" readonly="1" text="Buka Link"/>
+                                    <button name="action_open_link" string="Lihat Full" type="object" icon="fa-external-link"/>
                                 </tree>
                             </field>
                         </page>
@@ -78,7 +79,7 @@
             <search>
                 <field name="name"/>
                 <field name="staff_id"/>
-                <field name="system_used"/>
+                <field name="system_id"/>
                 <filter string="Baru" name="new_tickets" domain="[('state', '=', 'new')]"/>
                 <filter string="Dalam Proses" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
                 <filter string="Selesai" name="solved" domain="[('state', '=', 'solved')]"/>
@@ -86,7 +87,8 @@
                     <filter string="Staff" name="group_by_staff" context="{'group_by': 'staff_id'}"/>
                     <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
                     <filter string="Tanggal" name="group_by_date" context="{'group_by': 'date'}"/>
-                    <filter string="Jenis Masalah" name="group_by_issue" context="{'group_by': 'issue_type'}"/>
+                    <filter string="Sistem" name="group_by_system" context="{'group_by': 'system_id'}"/>
+                    <filter string="Jenis Masalah" name="group_by_issue" context="{'group_by': 'issue_type_id'}"/>
                 </group>
             </search>
         </field>
@@ -106,6 +108,49 @@
     </record>
 
     <!-- Menu -->
-    <menuitem id="menu_helpdesk_root" name="Helpdesk KodingYuk" sequence="10"/>
+    <menuitem id="menu_helpdesk_root" name="Helpdesk KodingYuk" sequence="10" groups="group_helpdesk_staff"/>
     <menuitem id="menu_helpdesk_ticket" name="Tickets" parent="menu_helpdesk_root" action="action_helpdesk_ticket" sequence="10"/>
+
+    <!-- Configuration Master Menus -->
+    <menuitem id="menu_helpdesk_config" name="Configuration" parent="menu_helpdesk_root" sequence="100" groups="group_helpdesk_manager"/>
+    
+    <!-- Issue Type -->
+    <record id="view_helpdesk_issue_type_tree" model="ir.ui.view">
+        <field name="name">helpdesk.issue.type.tree</field>
+        <field name="model">helpdesk.issue.type</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_helpdesk_issue_type" model="ir.actions.act_window">
+        <field name="name">Jenis Masalah</field>
+        <field name="res_model">helpdesk.issue.type</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <menuitem id="menu_helpdesk_issue_type" name="Jenis Masalah" parent="menu_helpdesk_config" action="action_helpdesk_issue_type" sequence="10"/>
+
+    <!-- System Type -->
+    <record id="view_helpdesk_system_type_tree" model="ir.ui.view">
+        <field name="name">helpdesk.system.type.tree</field>
+        <field name="model">helpdesk.system.type</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_helpdesk_system_type" model="ir.actions.act_window">
+        <field name="name">Master Sistem</field>
+        <field name="res_model">helpdesk.system.type</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <menuitem id="menu_helpdesk_system_type" name="Master Sistem" parent="menu_helpdesk_config" action="action_helpdesk_system_type" sequence="20"/>
 </odoo>

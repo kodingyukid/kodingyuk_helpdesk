@@ -11,6 +11,7 @@
     'data': [
         'security/security_groups.xml',
         'security/ir.model.access.csv',
+        'data/helpdesk_data.xml',
         'data/mail_template_data.xml',
         'wizard/upload_wizard_view.xml',
         'views/helpdesk_ticket_views.xml',

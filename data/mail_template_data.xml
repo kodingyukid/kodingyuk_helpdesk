@@ -26,8 +26,8 @@
                         </span>
                         <br/><br/>
                         <strong>Detail Ticket:</strong><br/>
-                        - Sistem: <t t-out="object.system_used"/><br/>
-                        - Masalah: <t t-out="dict(object._fields['issue_type'].selection).get(object.issue_type)"/><br/>
+                        - Sistem: <t t-out="object.system_id.name"/><br/>
+                        - Masalah: <t t-out="object.issue_type_id.name"/><br/>
                         <br/>
                         Terima kasih.
                     </p>
