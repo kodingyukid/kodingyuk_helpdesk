@@ -92,15 +92,26 @@ class HelpdeskUploadWizard(models.TransientModel):
                 )
                 
                 if public_url:
-                    self.env['helpdesk.firebase.attachment'].sudo().create({
+                    attachment = self.env['helpdesk.firebase.attachment'].sudo().create({
                         'name': file_data['name'],
                         'file_path': destination_path,
                         'url': public_url,
                         'mimetype': file_data['mimetype'],
                         'ticket_id': ticket.id,
                     })
+                    _logger.info("Attachment created: %s for ticket %s", attachment.id, ticket.id)
             
-            return {'type': 'ir.actions.client', 'tag': 'reload'}
+            _logger.info("Upload sequence completed for ticket %s", ticket.id)
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Success'),
+                    'message': _('Files uploaded successfully'),
+                    'sticky': False,
+                    'next': {'type': 'ir.actions.client', 'tag': 'reload'},
+                }
+            }
 
         except Exception as e:
             raise UserError(_("Firebase Upload Error: %s") % str(e))
