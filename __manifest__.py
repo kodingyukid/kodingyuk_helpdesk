@@ -9,6 +9,7 @@
     'website': 'https://kodingyuk.com',
     'depends': ['base', 'mail', 'hr'],
     'data': [
+        'security/security_groups.xml',
         'security/ir.model.access.csv',
         'data/mail_template_data.xml',
         'wizard/upload_wizard_view.xml',
