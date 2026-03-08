@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_helpdesk_upload_wizard_form" model="ir.ui.view">
+        <field name="name">helpdesk.upload.wizard.form</field>
+        <field name="model">helpdesk.upload.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Upload Attachment to Firebase">
+                <group>
+                    <field name="ticket_id" invisible="1"/>
+                    <group string="File 1">
+                        <field name="file_1" filename="file_1_name"/>
+                        <field name="file_1_name" invisible="1"/>
+                    </group>
+                    <group string="File 2">
+                        <field name="file_2" filename="file_2_name"/>
+                        <field name="file_2_name" invisible="1"/>
+                    </group>
+                </group>
+                <p class="text-muted">
+                    Hanya diperbolehkan file Foto (PNG, JPG, JPEG, WEBP) dan Video (MP4, MOV, AVI).
+                </p>
+                <footer>
+                    <button name="action_confirm_upload" string="Upload to Firebase" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

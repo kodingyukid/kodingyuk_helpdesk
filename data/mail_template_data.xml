@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence for Ticket Number -->
+        <record id="seq_helpdesk_ticket" model="ir.sequence">
+            <field name="name">Helpdesk Ticket Sequence</field>
+            <field name="code">kodingyuk.helpdesk.ticket</field>
+            <field name="prefix">TKT/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Email Template for State Change -->
+        <record id="email_template_helpdesk_ticket_state_change" model="mail.template">
+            <field name="name">Helpdesk Ticket: State Change Notification</field>
+            <field name="model_id" ref="model_kodingyuk_helpdesk_ticket"/>
+            <field name="subject">Update Status Ticket: {{ object.name }}</field>
+            <field name="partner_to">{{ object.staff_id.id }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Halo <t t-out="object.staff_id.name or ''">Staff</t>,<br/><br/>
+                        Status ticket Anda <strong><t t-out="object.name or ''"/></strong> telah berubah menjadi: 
+                        <span style="padding: 2px 5px; border-radius: 3px; background-color: #e0e0e0;">
+                            <t t-out="dict(object._fields['state'].selection).get(object.state)"/>
+                        </span>
+                        <br/><br/>
+                        <strong>Detail Ticket:</strong><br/>
+                        - Sistem: <t t-out="object.system_used"/><br/>
+                        - Masalah: <t t-out="dict(object._fields['issue_type'].selection).get(object.issue_type)"/><br/>
+                        <br/>
+                        Terima kasih.
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

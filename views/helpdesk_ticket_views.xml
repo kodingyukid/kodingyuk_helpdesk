@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_helpdesk_ticket_tree" model="ir.ui.view">
+        <field name="name">kodingyuk.helpdesk.ticket.tree</field>
+        <field name="model">kodingyuk.helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="state == 'new'" decoration-warning="state == 'in_progress'" decoration-success="state == 'solved'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="staff_id"/>
+                <field name="system_used"/>
+                <field name="issue_type"/>
+                <field name="state" widget="badge" decoration-info="state == 'new'" decoration-warning="state == 'in_progress'" decoration-success="state == 'solved'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_helpdesk_ticket_form" model="ir.ui.view">
+        <field name="name">kodingyuk.helpdesk.ticket.form</field>
+        <field name="model">kodingyuk.helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_upload_attachment" string="Upload Attachment" type="object" class="oe_highlight" invisible="state == 'solved'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,in_progress,solved" options="{'clickable': '1'}"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="staff_id"/>
+                            <field name="system_used"/>
+                            <field name="issue_type"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Detail Masalah" name="details">
+                            <group>
+                                <field name="chronology"/>
+                                <field name="data_to_fix"/>
+                            </group>
+                        </page>
+                        <page string="Lampiran Bukti (Firebase)" name="attachments">
+                            <field name="attachment_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="mimetype"/>
+                                    <field name="url" widget="url" text="Lihat File"/>
+                                    <button name="action_open_link" string="Buka" type="object" icon="fa-external-link"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View with Grouping -->
+    <record id="view_helpdesk_ticket_search" model="ir.ui.view">
+        <field name="name">kodingyuk.helpdesk.ticket.search</field>
+        <field name="model">kodingyuk.helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="staff_id"/>
+                <field name="system_used"/>
+                <filter string="Baru" name="new_tickets" domain="[('state', '=', 'new')]"/>
+                <filter string="Dalam Proses" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Selesai" name="solved" domain="[('state', '=', 'solved')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Staff" name="group_by_staff" context="{'group_by': 'staff_id'}"/>
+                    <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="Tanggal" name="group_by_date" context="{'group_by': 'date'}"/>
+                    <filter string="Jenis Masalah" name="group_by_issue" context="{'group_by': 'issue_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_helpdesk_ticket" model="ir.actions.act_window">
+        <field name="name">Helpdesk Ticket</field>
+        <field name="res_model">kodingyuk.helpdesk.ticket</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_helpdesk_ticket_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Buat ticket helpdesk baru!
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_helpdesk_root" name="Helpdesk KodingYuk" sequence="10"/>
+    <menuitem id="menu_helpdesk_ticket" name="Tickets" parent="menu_helpdesk_root" action="action_helpdesk_ticket" sequence="10"/>
+</odoo>
