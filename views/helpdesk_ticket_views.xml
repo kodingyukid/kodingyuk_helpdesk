@@ -111,6 +111,9 @@
     <menuitem id="menu_helpdesk_root" name="Helpdesk KodingYuk" sequence="10" groups="group_helpdesk_staff"/>
     <menuitem id="menu_helpdesk_ticket" name="Tickets" parent="menu_helpdesk_root" action="action_helpdesk_ticket" sequence="10"/>
 
+    <menuitem id="menu_helpdesk_alat" name="Alat" parent="menu_helpdesk_root" sequence="50" groups="group_helpdesk_staff"/>
+    <menuitem id="menu_helpdesk_password_generator" name="Generator Password" parent="menu_helpdesk_alat" action="action_helpdesk_password_generator_wizard" sequence="10"/>
+
     <!-- Configuration Master Menus -->
     <menuitem id="menu_helpdesk_config" name="Configuration" parent="menu_helpdesk_root" sequence="100" groups="group_helpdesk_manager"/>
     

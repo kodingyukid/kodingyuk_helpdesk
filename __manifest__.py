@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'KodingYuk Helpdesk',
-    'version': '1.0',
+    'version': '17.0.1.0.0',
     'summary': 'Helpdesk Ticketing System with Firebase Storage',
     'description': 'Modul Helpdesk untuk pengelolaan ticket dengan lampiran ke Firebase Storage.',
     'category': 'Services/Helpdesk',
@@ -14,6 +14,7 @@
         'data/helpdesk_data.xml',
         'data/mail_template_data.xml',
         'wizard/upload_wizard_view.xml',
+        'wizard/password_generator_wizard_view.xml',
         'views/helpdesk_ticket_views.xml',
     ],
     'installable': True,

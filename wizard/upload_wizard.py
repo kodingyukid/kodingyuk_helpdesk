@@ -49,7 +49,11 @@ class HelpdeskUploadWizard(models.TransientModel):
         self.ensure_one()
         
         if not firebase_service:
-            raise UserError(_("Firebase service not found. Please ensure 'absensi_sekolah' module is installed and configured."))
+            raise UserError(
+                _("Layanan Firebase tidak tersedia. Pastikan paket Python 'firebase-admin' terpasang "
+                  "dan parameter sistem firebase.service.account.key serta firebase.storage.bucket.name "
+                  "sudah diatur di Pengaturan.")
+            )
 
         ticket = self.ticket_id
         folder_name = f"ticket_{ticket.id}_{ticket.name.replace('/', '_')}"
