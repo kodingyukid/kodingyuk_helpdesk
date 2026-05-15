@@ -156,4 +156,22 @@
     </record>
 
     <menuitem id="menu_helpdesk_system_type" name="Master Sistem" parent="menu_helpdesk_config" action="action_helpdesk_system_type" sequence="20"/>
+
+    <!-- Email Templates — bisa diedit manual dari sini -->
+    <record id="action_helpdesk_email_templates" model="ir.actions.act_window">
+        <field name="name">Template Email Helpdesk</field>
+        <field name="res_model">mail.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('model', '=', 'kodingyuk.helpdesk.ticket')]</field>
+        <field name="context">{'default_model': 'kodingyuk.helpdesk.ticket'}</field>
+    </record>
+
+    <menuitem
+        id="menu_helpdesk_email_templates"
+        name="Template Email"
+        parent="menu_helpdesk_config"
+        action="action_helpdesk_email_templates"
+        sequence="30"
+        groups="group_helpdesk_manager"/>
+
 </odoo>

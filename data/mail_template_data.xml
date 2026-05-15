@@ -9,30 +9,236 @@
             <field name="padding">5</field>
             <field name="company_id" eval="False"/>
         </record>
+    </data>
 
-        <!-- Email Template for State Change -->
-        <record id="email_template_helpdesk_ticket_state_change" model="mail.template">
-            <field name="name">Helpdesk Ticket: State Change Notification</field>
+    <!-- noupdate="0" agar template ikut update saat upgrade modul -->
+    <data noupdate="0">
+
+        <!-- ═══════════════════════════════════════════════════════════
+             TEMPLATE 1: Notifikasi ke ADMIN — Tiket Baru Masuk
+             Dikirim ke: group_helpdesk_manager (semua user di grup)
+             Trigger: saat ticket baru dibuat
+        ════════════════════════════════════════════════════════════ -->
+        <record id="email_template_helpdesk_new_ticket_admin" model="mail.template">
+            <field name="name">Helpdesk: Tiket Baru Masuk (Notif Admin)</field>
             <field name="model_id" ref="model_kodingyuk_helpdesk_ticket"/>
-            <field name="subject">Update Status Ticket: {{ object.name }}</field>
-            <field name="partner_to">{{ object.staff_id.id }}</field>
+            <field name="subject">🎫 Tiket Baru: {{ object.name }} — {{ object.issue_type_id.name }}</field>
             <field name="body_html" type="html">
-                <div style="margin: 0px; padding: 0px;">
-                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                        Halo <t t-out="object.staff_id.name or ''">Staff</t>,<br/><br/>
-                        Status ticket Anda <strong><t t-out="object.name or ''"/></strong> telah berubah menjadi: 
-                        <span style="padding: 2px 5px; border-radius: 3px; background-color: #e0e0e0;">
-                            <t t-out="dict(object._fields['state'].selection).get(object.state)"/>
-                        </span>
-                        <br/><br/>
-                        <strong>Detail Ticket:</strong><br/>
-                        - Sistem: <t t-out="object.system_id.name"/><br/>
-                        - Masalah: <t t-out="object.issue_type_id.name"/><br/>
-                        <br/>
-                        Terima kasih.
-                    </p>
-                </div>
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9f9f9; padding: 0;">
+
+  <!-- Header -->
+  <div style="background: #1a56db; padding: 24px 32px; border-radius: 8px 8px 0 0;">
+    <h2 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 600;">
+      🎫 Tiket Helpdesk Baru Masuk
+    </h2>
+    <p style="margin: 4px 0 0; color: #bfdbfe; font-size: 13px;">
+      Segera tindak lanjuti tiket berikut
+    </p>
+  </div>
+
+  <!-- Body -->
+  <div style="background: #ffffff; padding: 28px 32px; border: 1px solid #e5e7eb; border-top: none;">
+
+    <!-- Ticket Info Box -->
+    <div style="background: #eff6ff; border-left: 4px solid #1a56db; padding: 16px 20px; border-radius: 0 6px 6px 0; margin-bottom: 24px;">
+      <p style="margin: 0 0 4px; font-size: 13px; color: #6b7280;">Nomor Tiket</p>
+      <p style="margin: 0; font-size: 20px; font-weight: 700; color: #1e3a8a;">
+        <t t-out="object.name"/>
+      </p>
+    </div>
+
+    <!-- Detail Grid -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+      <tr>
+        <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; width: 40%;">
+          <span style="font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Pelapor</span><br/>
+          <span style="font-size: 14px; font-weight: 600; color: #111827;">
+            <t t-out="object.staff_id.name or '-'"/>
+          </span>
+        </td>
+        <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6;">
+          <span style="font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Tanggal</span><br/>
+          <span style="font-size: 14px; font-weight: 600; color: #111827;">
+            <t t-out="object.date.strftime('%d %b %Y, %H:%M') if object.date else '-'"/>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6;">
+          <span style="font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Sistem</span><br/>
+          <span style="font-size: 14px; font-weight: 600; color: #111827;">
+            <t t-out="object.system_id.name or '-'"/>
+          </span>
+        </td>
+        <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6;">
+          <span style="font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Jenis Masalah</span><br/>
+          <span style="font-size: 14px; font-weight: 600; color: #111827;">
+            <t t-out="object.issue_type_id.name or '-'"/>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" style="padding: 10px 0;">
+          <span style="font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Status</span><br/>
+          <span style="display: inline-block; margin-top: 4px; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #fee2e2; color: #991b1b;">
+            ● New
+          </span>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Kronologi -->
+    <div style="margin-bottom: 16px;">
+      <p style="margin: 0 0 6px; font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Kronologi Singkat</p>
+      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 16px; font-size: 14px; color: #374151; line-height: 1.6;">
+        <t t-out="object.chronology or '-'"/>
+      </div>
+    </div>
+
+    <!-- Data yang Perlu Diperbaiki -->
+    <div style="margin-bottom: 24px;">
+      <p style="margin: 0 0 6px; font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Data yang Perlu Diperbaiki</p>
+      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 16px; font-size: 14px; color: #374151; line-height: 1.6;">
+        <t t-out="object.data_to_fix or '-'"/>
+      </div>
+    </div>
+
+    <!-- CTA Button -->
+    <div style="text-align: center; margin-top: 8px;">
+      <a href="{{ ctx.get('web_base_url', '') }}/web#model=kodingyuk.helpdesk.ticket&amp;id={{ object.id }}&amp;view_type=form"
+         style="display: inline-block; background: #1a56db; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 6px; font-size: 14px; font-weight: 600;">
+        Buka Tiket di Odoo →
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="padding: 16px 32px; text-align: center; border-radius: 0 0 8px 8px;">
+    <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+      Email ini dikirim otomatis oleh sistem Helpdesk KodingYuk.<br/>
+      Jangan balas email ini.
+    </p>
+  </div>
+
+</div>
             </field>
         </record>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             TEMPLATE 2: Notifikasi ke USER — Status Tiket Berubah
+             Dikirim ke: staff_id (pelapor)
+             Trigger: saat state ticket diubah admin
+        ════════════════════════════════════════════════════════════ -->
+        <record id="email_template_helpdesk_ticket_state_change" model="mail.template">
+            <field name="name">Helpdesk: Update Status Tiket (Notif User)</field>
+            <field name="model_id" ref="model_kodingyuk_helpdesk_ticket"/>
+            <field name="subject">Update Status Tiket {{ object.name }}: {{ dict(object._fields['state'].selection).get(object.state) }}</field>
+            <field name="partner_to">{{ object.staff_id.id }}</field>
+            <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9f9f9; padding: 0;">
+
+  <!-- Header — warna berubah sesuai state -->
+  <t t-set="state_color" t-value="'#16a34a' if object.state == 'solved' else ('#d97706' if object.state == 'in_progress' else ('#dc2626' if object.state == 'new' else '#6b7280'))"/>
+  <t t-set="state_label" t-value="dict(object._fields['state'].selection).get(object.state, object.state)"/>
+  <t t-set="state_emoji" t-value="'✅' if object.state == 'solved' else ('⚙️' if object.state == 'in_progress' else ('🆕' if object.state == 'new' else '❌'))"/>
+
+  <div t-att-style="'background: ' + state_color + '; padding: 24px 32px; border-radius: 8px 8px 0 0;'">
+    <h2 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 600;">
+      <t t-out="state_emoji"/> Status Tiket Diperbarui
+    </h2>
+    <p style="margin: 4px 0 0; color: rgba(255,255,255,0.8); font-size: 13px;">
+      Tim helpdesk telah memperbarui status tiket Anda
+    </p>
+  </div>
+
+  <!-- Body -->
+  <div style="background: #ffffff; padding: 28px 32px; border: 1px solid #e5e7eb; border-top: none;">
+
+    <!-- Greeting -->
+    <p style="margin: 0 0 20px; font-size: 15px; color: #111827;">
+      Halo <strong><t t-out="object.staff_id.name or 'Pengguna'"/></strong>,
+    </p>
+    <p style="margin: 0 0 24px; font-size: 14px; color: #374151; line-height: 1.6;">
+      Tiket helpdesk Anda dengan nomor <strong><t t-out="object.name"/></strong> telah diperbarui statusnya menjadi:
+    </p>
+
+    <!-- Status Badge -->
+    <div style="text-align: center; margin-bottom: 28px;">
+      <span t-att-style="'display: inline-block; padding: 8px 24px; border-radius: 24px; font-size: 16px; font-weight: 700; color: #ffffff; background: ' + state_color + ';'">
+        <t t-out="state_emoji"/> <t t-out="state_label"/>
+      </span>
+    </div>
+
+    <!-- Ticket Detail -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; background: #f9fafb; border-radius: 8px; overflow: hidden;">
+      <tr style="background: #f3f4f6;">
+        <td colspan="2" style="padding: 10px 16px; font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">
+          Detail Tiket
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 10px 16px; font-size: 13px; color: #6b7280; width: 40%; border-bottom: 1px solid #e5e7eb;">Nomor Tiket</td>
+        <td style="padding: 10px 16px; font-size: 13px; font-weight: 600; color: #111827; border-bottom: 1px solid #e5e7eb;">
+          <t t-out="object.name"/>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 10px 16px; font-size: 13px; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Sistem</td>
+        <td style="padding: 10px 16px; font-size: 13px; font-weight: 600; color: #111827; border-bottom: 1px solid #e5e7eb;">
+          <t t-out="object.system_id.name or '-'"/>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 10px 16px; font-size: 13px; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Jenis Masalah</td>
+        <td style="padding: 10px 16px; font-size: 13px; font-weight: 600; color: #111827; border-bottom: 1px solid #e5e7eb;">
+          <t t-out="object.issue_type_id.name or '-'"/>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 10px 16px; font-size: 13px; color: #6b7280;">Tanggal Dibuat</td>
+        <td style="padding: 10px 16px; font-size: 13px; font-weight: 600; color: #111827;">
+          <t t-out="object.date.strftime('%d %b %Y, %H:%M') if object.date else '-'"/>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Pesan khusus per state -->
+    <t t-if="object.state == 'in_progress'">
+      <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px; padding: 14px 16px; margin-bottom: 24px;">
+        <p style="margin: 0; font-size: 13px; color: #92400e; line-height: 1.6;">
+          ⚙️ <strong>Tiket Anda sedang diproses.</strong> Tim helpdesk sedang menangani masalah Anda. Kami akan memberikan update lebih lanjut segera.
+        </p>
+      </div>
+    </t>
+    <t t-if="object.state == 'solved'">
+      <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 14px 16px; margin-bottom: 24px;">
+        <p style="margin: 0; font-size: 13px; color: #166534; line-height: 1.6;">
+          ✅ <strong>Tiket Anda telah diselesaikan.</strong> Jika masalah masih berlanjut atau ada pertanyaan, silakan buat tiket baru.
+        </p>
+      </div>
+    </t>
+    <t t-if="object.state == 'cancelled'">
+      <div style="background: #fef2f2; border: 1px solid #fca5a5; border-radius: 6px; padding: 14px 16px; margin-bottom: 24px;">
+        <p style="margin: 0; font-size: 13px; color: #991b1b; line-height: 1.6;">
+          ❌ <strong>Tiket Anda telah dibatalkan.</strong> Jika Anda merasa ini adalah kesalahan, silakan hubungi tim helpdesk.
+        </p>
+      </div>
+    </t>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="padding: 16px 32px; text-align: center; border-radius: 0 0 8px 8px;">
+    <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+      Email ini dikirim otomatis oleh sistem Helpdesk KodingYuk.<br/>
+      Jangan balas email ini langsung — buat tiket baru jika ada pertanyaan.
+    </p>
+  </div>
+
+</div>
+            </field>
+        </record>
+
     </data>
 </odoo>

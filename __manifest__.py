@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'KodingYuk Helpdesk',
-    'version': '17.0.1.0.0',
+    'version': '17.0.1.1.0',
     'summary': 'Helpdesk Ticketing System with Firebase Storage',
     'description': 'Modul Helpdesk untuk pengelolaan ticket dengan lampiran ke Firebase Storage.',
     'category': 'Services/Helpdesk',
