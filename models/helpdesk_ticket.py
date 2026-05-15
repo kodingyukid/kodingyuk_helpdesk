@@ -44,7 +44,7 @@ class HelpdeskTicket(models.Model):
         return res
 
     def _send_state_change_email(self):
-        template = self.env.ref('KodingYuk_helpdesk.email_template_helpdesk_ticket_state_change', raise_if_not_found=False)
+        template = self.env.ref('kodingyuk_helpdesk.email_template_helpdesk_ticket_state_change', raise_if_not_found=False)
         if template:
             for rec in self:
                 if rec.staff_id and rec.staff_id.email:
