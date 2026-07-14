@@ -8,7 +8,9 @@
             <tree decoration-info="state == 'new'" decoration-warning="state == 'in_progress'" decoration-success="state == 'solved'">
                 <field name="name"/>
                 <field name="date"/>
+                <field name="ticket_type"/>
                 <field name="staff_id"/>
+                <field name="student_id" optional="hide"/>
                 <field name="system_id"/>
                 <field name="issue_type_id"/>
                 <field name="state" widget="badge" decoration-info="state == 'new'" decoration-warning="state == 'in_progress'" decoration-success="state == 'solved'"/>
@@ -34,12 +36,17 @@
                     </div>
                     <group>
                         <group>
-                            <field name="staff_id"/>
-                            <field name="system_id" options="{'no_create': True, 'no_open': True}"/>
-                            <field name="issue_type_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="ticket_type" widget="radio" options="{'horizontal': true}"/>
+                            <field name="staff_id" invisible="ticket_type != 'internal'" required="ticket_type == 'internal'"/>
+                            <field name="student_id" invisible="ticket_type != 'student'" required="ticket_type == 'student'"/>
+                            <field name="course_id" invisible="ticket_type != 'student'"/>
+                            <field name="kodyhost_client_id" invisible="ticket_type != 'kodyhost'" required="ticket_type == 'kodyhost'"/>
+                            <field name="kodyhost_service_id" invisible="ticket_type != 'kodyhost'"/>
                         </group>
                         <group>
                             <field name="date"/>
+                            <field name="system_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="issue_type_id" options="{'no_create': True, 'no_open': True}"/>
                         </group>
                     </group>
                     <notebook>
@@ -79,12 +86,20 @@
             <search>
                 <field name="name"/>
                 <field name="staff_id"/>
+                <field name="student_id"/>
                 <field name="system_id"/>
+                <filter string="Internal IT" name="type_internal" domain="[('ticket_type', '=', 'internal')]"/>
+                <filter string="Student Support" name="type_student" domain="[('ticket_type', '=', 'student')]"/>
+                <filter string="KodyHost Support" name="type_kodyhost" domain="[('ticket_type', '=', 'kodyhost')]"/>
+                <separator/>
                 <filter string="Baru" name="new_tickets" domain="[('state', '=', 'new')]"/>
                 <filter string="Dalam Proses" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
                 <filter string="Selesai" name="solved" domain="[('state', '=', 'solved')]"/>
                 <group expand="0" string="Group By">
+                    <filter string="Tipe Tiket" name="group_by_type" context="{'group_by': 'ticket_type'}"/>
                     <filter string="Staff" name="group_by_staff" context="{'group_by': 'staff_id'}"/>
+                    <filter string="Siswa" name="group_by_student" context="{'group_by': 'student_id'}"/>
+                    <filter string="Course" name="group_by_course" context="{'group_by': 'course_id'}"/>
                     <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
                     <filter string="Tanggal" name="group_by_date" context="{'group_by': 'date'}"/>
                     <filter string="Sistem" name="group_by_system" context="{'group_by': 'system_id'}"/>

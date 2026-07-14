@@ -15,7 +15,10 @@ class HelpdeskTicket(models.Model):
         string='Ticket Number', required=True, copy=False,
         readonly=True, default=lambda self: _('New')
     )
-    staff_id = fields.Many2one('res.partner', string='Nama Staff', required=True, tracking=True)
+
+    # staff_id is required only for internal tickets
+    staff_id = fields.Many2one('res.partner', string='Nama Staff', tracking=True)
+
     system_id = fields.Many2one('helpdesk.system.type', string='Sistem yang Digunakan', tracking=True)
     issue_type_id = fields.Many2one('helpdesk.issue.type', string='Jenis Masalah', tracking=True)
 
@@ -30,6 +33,41 @@ class HelpdeskTicket(models.Model):
         ('solved', 'Solved'),
         ('cancelled', 'Cancelled'),
     ], string='Status', default='new', tracking=True)
+
+    # === INTEGRATION: Unified Helpdesk ===
+    ticket_type = fields.Selection([
+        ('internal', 'Internal IT'),
+        ('student', 'Student Support'),
+        ('kodyhost', 'KodyHost Support'),
+    ], string='Tipe Tiket', default='internal', tracking=True)
+
+    student_id = fields.Many2one(
+        'm.siswa',
+        string='Siswa Terkait',
+        tracking=True,
+        help="Diisi jika tiket dari siswa"
+    )
+
+    course_id = fields.Many2one(
+        'lms.course',
+        string='Course Terkait',
+        tracking=True,
+        help="Diisi jika tiket terkait course di LMS"
+    )
+
+    kodyhost_service_id = fields.Many2one(
+        'ky.service',
+        string='Layanan KodyHost',
+        tracking=True,
+        help="Diisi jika tiket dari client KodyHost"
+    )
+
+    kodyhost_client_id = fields.Many2one(
+        'ky.client',
+        string='KodyHost Client',
+        tracking=True,
+        help="Client KodyHost yang membuat tiket"
+    )
 
     attachment_ids = fields.One2many(
         'helpdesk.firebase.attachment', 'ticket_id',
